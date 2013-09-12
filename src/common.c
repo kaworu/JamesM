@@ -2,7 +2,8 @@
  * common.c -- Defines some global functions.
  * From JamesM's kernel development tutorials.
  */
-#include "common.h"
+#include <common.h>
+#include <monitor.h>
 
 
 void
@@ -29,4 +30,13 @@ inw(uint16_t port)
 
 	asm volatile ("inw %1, %0" : "=a" (ret) : "dN" (port));
 	return (ret);
+}
+
+
+void
+panic(const char *s)
+{
+	(void)printf("*** Kernel Panic: %s ***\n\r", s);
+	for (;;)
+		;
 }

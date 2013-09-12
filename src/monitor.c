@@ -1,4 +1,4 @@
-#include "monitor.h"
+#include <monitor.h>
 
 
 #define MON_DEFAULT_ATTR_BYTE	((0/* black */ << 4) | (15/* white */ & 0x0F))
@@ -102,17 +102,4 @@ mon_clear(void)
 		video_memory[i] = MON_BLANK_CHAR;
 	cursor_x = cursor_y = 0;
 	move_cursor();
-}
-
-
-void
-mon_write(char *s)
-{
-	char *c = s;
-	if (c != NULL) {
-		while (*c) {
-			mon_putchar(*c);
-			c += 1;
-		}
-	}
 }
