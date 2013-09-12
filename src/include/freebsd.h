@@ -5,7 +5,9 @@
  *
  * routines stolen to freebsd.
  */
+#include <stdarg.h>
 
-int	printf(const char *s, ...);
+int	printf(const char *fmt, ...);
+int	vprintf(const char *fmt, va_list ap);
 
 #endif /* ndef FREEBSD_H */

@@ -16,21 +16,20 @@
  *
  * $FreeBSD$
  */
-
 #include <stdarg.h>
+
 #include <monitor.h>
 
+
 int
-printf(const char *fmt,...)
+vprintf(const char *fmt, va_list ap)
 {
-	va_list ap;
 	const char *hex = "0123456789abcdef";
 	char buf[11];
 	char *s;
 	unsigned u;
 	int ret = 0, i, c;
 
-	va_start(ap, fmt);
 	while ((c = *fmt++)) {
 		if (c == '%') {
 			c = *fmt++;
@@ -79,6 +78,19 @@ printf(const char *fmt,...)
 		mon_putchar(c);
 		ret++;
 	}
+
+	return (ret);
+}
+
+
+int
+printf(const char *fmt,...)
+{
+	va_list ap;
+	int ret;
+
+	va_start(ap, fmt);
+	ret = vprintf(fmt, ap);
 	va_end(ap);
 
 	return (ret);

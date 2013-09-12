@@ -1,6 +1,8 @@
 #ifndef DESCRIPTOR_TABLES_H
 #define DESCRIPTOR_TABLES_H
 
+#include <common.h>
+
 /*
  * This structure contains the value of one GDT entry. We use the attribute
  * 'packed' to tell the compiler not to change any of the alignment in the

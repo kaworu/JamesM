@@ -2,6 +2,8 @@
  * common.c -- Defines some global functions.
  * From JamesM's kernel development tutorials.
  */
+#include <stdarg.h>
+
 #include <common.h>
 #include <monitor.h>
 
@@ -34,9 +36,18 @@ inw(uint16_t port)
 
 
 void
-panic(const char *s)
+_panic(const char *fmt, ...)
 {
-	(void)printf("*** Kernel Panic: %s ***\n\r", s);
+	va_list ap;
+
+	(void)printf("\n***** Kernel panic! *****\n");
+
+	va_start(ap, fmt);
+	(void)vprintf(fmt, ap);
+	va_end(ap);
+
+	(void)printf("\n*************************\n");
+
 	for (;;)
 		;
 }

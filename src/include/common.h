@@ -23,10 +23,10 @@ uint8_t		inb(uint16_t port); /* read a byte out from port */
 uint16_t	inw(uint16_t port); /* read two bytes out from port */
 
 
-#define PANIC(s)	do {       \
-	panic(s);                  \
-	} while (/*CONSTCOND*/0);
-void	panic(const char *s);
+#define PANIC(s, ...)	do {                                    \
+	_panic("%s:%u: " s, __FILE__, __LINE__, ##__VA_ARGS__); \
+} while (/*CONSTCOND*/0);
+void	_panic(const char *fmt, ...);
 
 #endif /* ndef COMMON_H */
 #include <freebsd.h>
