@@ -10,14 +10,15 @@ case "$(/usr/bin/basename "$0")" in
     run_bochs.sh)
         # run_bochs.sh
         # mounts the correct loopback device, runs bochs, then unmounts.
-        /sbin/losetup /dev/loop0 floppy.img
-        bochs -f bochsrc.txt
+        /sbin/losetup /dev/loop0 "$D/floppy.img"
+        bochs -f "$D/bochsrc.txt"
         /sbin/losetup -d /dev/loop0
     ;;
     update_image.sh)
         /sbin/losetup /dev/loop0 "$D/floppy.img"
         /bin/mount /dev/loop0 "$D/mnt"
         /bin/cp src/kernel "$D/mnt/kernel"
+        /bin/sync
         /bin/umount /dev/loop0
         /sbin/losetup -d /dev/loop0
     ;;
