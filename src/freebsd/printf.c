@@ -25,10 +25,10 @@ printf(const char *fmt,...)
 {
 	va_list ap;
 	const char *hex = "0123456789abcdef";
-	char buf[10];
+	char buf[11];
 	char *s;
 	unsigned u;
-	int i = 0, c;
+	int ret = 0, i, c;
 
 	va_start(ap, fmt);
 	while ((c = *fmt++)) {
@@ -37,15 +37,24 @@ printf(const char *fmt,...)
 			switch (c) {
 			case 'c':
 				mon_putchar(va_arg(ap, int));
-				i++;
+				ret++;
 				continue;
 			case 's':
 				for (s = va_arg(ap, char *); *s; s++) {
 					mon_putchar(*s);
-					i++;
+					ret++;
 				}
 				continue;
-			case 'd':	/* A lie, always prints unsigned */
+			case 'd':
+				i = va_arg(ap, int);
+				u = (i < 0 ? -i : i);
+				s = buf;
+				do
+					*s++ = '0' + u % 10U;
+				while (u /= 10U);
+				if (i < 0)
+					*s++ = '-';
+				goto dumpbuf;
 			case 'u':
 				u = va_arg(ap, unsigned);
 				s = buf;
@@ -55,7 +64,7 @@ printf(const char *fmt,...)
 			dumpbuf:;
 				while (--s >= buf) {
 					mon_putchar(*s);
-					i++;
+					ret++;
 				}
 				continue;
 			case 'x':
@@ -68,9 +77,9 @@ printf(const char *fmt,...)
 			}
 		}
 		mon_putchar(c);
-		i++;
+		ret++;
 	}
 	va_end(ap);
 
-	return (i);
+	return (ret);
 }
