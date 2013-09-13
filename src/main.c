@@ -4,6 +4,7 @@
  */
 #include <descriptor_tables.h>
 #include <monitor.h>
+#include <timer.h>
 
 struct multiboot;
 
@@ -13,13 +14,12 @@ kern_main(struct multiboot *mboot_ptr)
 
 	mon_clear();
 	init_descriptor_tables();
+	init_timer(100);
 
 	(void)printf("Hello World :)\n");
-	(void)printf("print test: char(%c), string(%s), int(%d), uint(%u), hex(%x)\n",
-	    '9', "test", -42, 42, 17);
 
-	asm volatile ("int $0x3");
-	asm volatile ("int $0x4");
+	asm volatile ("sti");
+	init_timer(100);
 
 	PANIC("end of kern_main()");
 	/* NOTREACHED */

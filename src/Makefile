@@ -13,7 +13,8 @@ SOURCES=                \
 	asm/idt_flush.o     \
 	asm/interrupt.o     \
 	isr.o               \
-	descriptor_tables.o
+	descriptor_tables.o \
+	timer.o
 
 CFLAGS=-nostdlib -nostdinc -fno-builtin -fno-stack-protector -m32 -I./include -I./freebsd/i386/include
 LDFLAGS=-Tlink.ld -melf_i386
@@ -22,7 +23,7 @@ ASFLAGS=-felf
 all: $(SOURCES) link
 
 clean:
-	-rm -f *.o kernel
+	-rm -f *.o freebsd/*.o asm/*.o kernel
 
 link:
 	ld $(LDFLAGS) -o kernel $(SOURCES)

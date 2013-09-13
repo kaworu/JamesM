@@ -2,8 +2,6 @@
  * common.c -- Defines some global functions.
  * From JamesM's kernel development tutorials.
  */
-#include <stdarg.h>
-
 #include <common.h>
 #include <monitor.h>
 
@@ -32,6 +30,26 @@ inw(uint16_t port)
 
 	asm volatile ("inw %1, %0" : "=a" (ret) : "dN" (port));
 	return (ret);
+}
+
+
+void *
+memset(void *b, int c, size_t len)
+{
+	char *bb;
+	
+	for (bb = b; len > 0; len--)
+		*bb++ = c;
+
+	return (b);
+}
+
+
+void
+bzero(void *b, size_t len)
+{
+
+	(void)memset(b, 0, len);
 }
 
 
