@@ -10,6 +10,5 @@
 void	mon_putchar(char c); /* Write a single character out to the screen. */
 void	mon_clear(void); /* Clear the screen. */
 void	mon_write(char *s); /* Output a null-terminated ASCII string to the monitor. */
-int	kprintf(const char *fmt, ...); /* Kernel printf */
 
 #endif /* ndef MONITOR_H */

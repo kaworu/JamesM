@@ -10,14 +10,19 @@
 isrhdl_t interrupt_handlers[256];
 
 /* This gets called from our ASM interrupt handler stub. */
-void isr_handler(struct cpu_registers regs)
+void isr_handler(struct cpu_regs regs)
 {
 
-	(void)printf("recieved interrupt: %d\n", regs.int_no);
+	if (interrupt_handlers[regs.int_no] != NULL) {
+		isrhdl_t handler = interrupt_handlers[regs.int_no];
+		handler(regs);
+	} else {
+		(void)printf("unhandled interrupt: %d\n", regs.int_no);
+	}
 }
 
 /* This gets called from our ASM interrupt handler stub. */
-void irq_handler(struct cpu_registers regs) {
+void irq_handler(struct cpu_regs regs) {
 	/* Send an EOI (end of interrupt) signal to the PICs. If this interrupt
 	   involved the slave. */
 	if (regs.int_no >= 40) {
@@ -37,7 +42,7 @@ void
 register_interrupt_handler(uint32_t n, isrhdl_t handler)
 {
 
-	if (n < 0 || n > countof(interrupt_handlers))
+	if (n > countof(interrupt_handlers))
 		PANIC("Bad interrupt handler index.");
 	interrupt_handlers[n] = handler;
 }

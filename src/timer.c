@@ -9,7 +9,7 @@
 
 
 static void
-timer_callback(struct cpu_registers regs)
+timer_callback(struct cpu_regs regs)
 {
 	static uint32_t tick;
 

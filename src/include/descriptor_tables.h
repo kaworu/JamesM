@@ -9,36 +9,36 @@
  * structure.
  */
 struct gdt_entry {
-	uint16_t	limit_lo;    /* The lower 16 bits of the limit. */
-	uint16_t	base_lo;     /* The lower 16 bits of the base. */
-	uint8_t		base_mi;     /* The next 8 bits of the base. */
-	uint8_t		access;      /* Access flags, determine what ring this segment can be used in. */
-	uint8_t		granularity;
-	uint8_t		base_hi;     /* The last 8 bits of the base. */
+	uint16_t	ge_limit_lo;    /* The lower 16 bits of the limit. */
+	uint16_t	ge_base_lo;     /* The lower 16 bits of the base. */
+	uint8_t		ge_base_mi;     /* The next 8 bits of the base. */
+	uint8_t		ge_access;      /* Access flags, determine what ring this segment can be used in. */
+	uint8_t		ge_granularity;
+	uint8_t		ge_base_hi;     /* The last 8 bits of the base. */
 } __packed;
 
 struct gdt_ptr {
-	uint16_t	limit; /* The upper 16 bits of all selector limits. */
-	uint32_t	base;  /* The address of the first gdt_entry_t struct. */
+	uint16_t	gp_limit; /* The upper 16 bits of all selector limits. */
+	uint32_t	gp_base;  /* The address of the first gdt_entry_t struct. */
 } __packed;
 
 
 /* A struct describing an interrupt gate. */
 struct idt_entry
 {
-	uint16_t	base_lo; /* The lower 16 bits of the address to jump to when this interrupt fires. */
-	uint16_t	sel;     /* Kernel segment selector. */
-	uint8_t		always0; /* This must always be zero. */
-	uint8_t		flags;   /* More flags. See documentation. */
-	uint16_t	base_hi; /* The upper 16 bits of the address to jump to. */
+	uint16_t	ie_base_lo; /* The lower 16 bits of the address to jump to when this interrupt fires. */
+	uint16_t	ie_sel;     /* Kernel segment selector. */
+	uint8_t		ie_always0; /* This must always be zero. */
+	uint8_t		ie_flags;   /* More flags. See documentation. */
+	uint16_t	ie_base_hi; /* The upper 16 bits of the address to jump to. */
 } __packed;
 
 /* A struct describing a pointer to an array of interrupt handlers.
    This is in a format suitable for giving to 'lidt'. */
 struct idt_ptr
 {
-	uint16_t	limit;
-	uint32_t	base;  /* The address of the first element in our idt_entry_t array. */
+	uint16_t	ip_limit;
+	uint32_t	ip_base;  /* The address of the first element in our idt_entry_t array. */
 } __packed;
 
 

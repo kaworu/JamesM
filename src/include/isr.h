@@ -24,7 +24,7 @@
 #define IRQ14	46
 #define IRQ15	47
 
-struct cpu_registers
+struct cpu_regs
 {
    uint32_t	ds;                                     /* Data segment selector */
    uint32_t	edi, esi, ebp, esp, ebx, edx, ecx, eax; /* Pushed by pusha. */
@@ -36,7 +36,7 @@ struct cpu_registers
  * Enables registration of callbacks for interrupts or IRQs.  For IRQs, to ease
  * confusion, use the #defines above as the first parameter.
  */
-typedef	void (*isrhdl_t)(struct cpu_registers);
+typedef	void (*isrhdl_t)(struct cpu_regs);
 
 void register_interrupt_handler(uint32_t n, isrhdl_t handler);
 #endif /* ndef ISR_H */

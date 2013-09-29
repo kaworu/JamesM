@@ -24,4 +24,5 @@ void	bzero(void *b, size_t len);
 void *	memset(void *b, int c, size_t len);
 
 #endif /* ndef COMMON_H */
+#include <kmalloc.h>
 #include <freebsd.h>

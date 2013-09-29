@@ -6,6 +6,6 @@
  */
 #include <common.h>
 
-void	timer_init(uint32_t freq);
+void	init_timer(uint32_t freq);
 
 #endif /* ndef TIMER_H */

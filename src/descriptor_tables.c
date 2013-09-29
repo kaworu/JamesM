@@ -39,8 +39,8 @@ init_descriptor_tables(void)
 static void
 init_gdt(void)
 {
-	gdt_ptr.limit = sizeof(gdt_entries) - 1;
-	gdt_ptr.base  = (uint32_t)&gdt_entries;
+	gdt_ptr.gp_limit = sizeof(gdt_entries) - 1;
+	gdt_ptr.gp_base  = (uint32_t)&gdt_entries;
 
 	gdt_set_gate(0, 0, 0, 0, 0);                /* Null segment */
 	gdt_set_gate(1, 0, 0xFFFFFFFF, 0x9A, 0xCF); /* Code segment */
@@ -62,23 +62,23 @@ gdt_set_gate(uint32_t n, uint32_t base, uint32_t limit, uint8_t access,
 	if (n >= countof(gdt_entries))
 		PANIC("bad gdt_entries index");
 
-	gdt_entries[n].base_lo = (base & 0xFFFF);
-	gdt_entries[n].base_mi = (base >> 16) & 0xFF;
-	gdt_entries[n].base_hi = (base >> 24) & 0xFF;
+	gdt_entries[n].ge_base_lo = (base & 0xFFFF);
+	gdt_entries[n].ge_base_mi = (base >> 16) & 0xFF;
+	gdt_entries[n].ge_base_hi = (base >> 24) & 0xFF;
 
-	gdt_entries[n].limit_lo    = (limit & 0xFFFF);
-	gdt_entries[n].granularity = (limit >> 16) & 0x0F;
+	gdt_entries[n].ge_limit_lo    = (limit & 0xFFFF);
+	gdt_entries[n].ge_granularity = (limit >> 16) & 0x0F;
 
-	gdt_entries[n].granularity |= gran & 0xF0;
-	gdt_entries[n].access       = access;
+	gdt_entries[n].ge_granularity |= gran & 0xF0;
+	gdt_entries[n].ge_access       = access;
 }
 
 
 static void
 init_idt(void)
 {
-	idt_ptr.limit = sizeof(idt_entries) - 1;
-	idt_ptr.base  = (uint32_t)&idt_entries;
+	idt_ptr.ip_limit = sizeof(idt_entries) - 1;
+	idt_ptr.ip_base  = (uint32_t)&idt_entries;
 
 	(void)memset(&idt_entries, 0, sizeof(idt_entries));
 
@@ -153,12 +153,12 @@ idt_set_gate(uint32_t n, uint32_t base, uint16_t sel, uint8_t flags)
 	if (n >= countof(idt_entries))
 		PANIC("Bad idt_entries index");
 
-	idt_entries[n].base_lo = base & 0xFFFF;
-	idt_entries[n].base_hi = (base >> 16) & 0xFFFF;
+	idt_entries[n].ie_base_lo = base & 0xFFFF;
+	idt_entries[n].ie_base_hi = (base >> 16) & 0xFFFF;
 
-	idt_entries[n].sel     = sel;
-	idt_entries[n].always0 = 0;
+	idt_entries[n].ie_sel     = sel;
+	idt_entries[n].ie_always0 = 0;
 	/* We must uncomment the OR below when we get to using user-mode. It
 	  sets the interrupt gate's privilege level to 3. */
-	idt_entries[n].flags   = flags /* | 0x60 */;
+	idt_entries[n].ie_flags   = flags /* | 0x60 */;
 }

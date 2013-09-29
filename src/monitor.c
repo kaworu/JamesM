@@ -80,7 +80,7 @@ void mon_putchar(char c)
 		cursor_y++;
 	} else if (c >= ' ') {
 		/* Handle any other printable char */
-		uint16_t *location = video_memory + (cursor_x++ + MON_WIDTH * cursor_y);
+		location = video_memory + (cursor_x++ + MON_WIDTH * cursor_y);
 		*location = c | attr;
 	}
 
