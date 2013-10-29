@@ -84,6 +84,8 @@ kmalloc0_ap(size_t len, uint32_t *phys)
 static void *
 _kmalloc(size_t len, uint32_t *phys, uint32_t flags)
 {
+	void *addr = NULL;
+
 	if (kernel_heap == NULL) {
 		if ((flags & M_ALIGNED) && (placement_address & 0xFFFFF000)) {
 			/* the address is not already aligned */
@@ -91,16 +93,17 @@ _kmalloc(size_t len, uint32_t *phys, uint32_t flags)
 		}
 		if (phys != NULL)
 			*phys = placement_address;
-		if (flags & M_BZERO)
-			bzero((void *)placement_address, len);
 		placement_address += len;
-		return ((void *)(placement_address - len));
+		addr = (void *)(placement_address - len);
+	} else {
+		addr = alloc(len, (flags & M_ALIGNED), kernel_heap);
+		if (phys != NULL) {
+			struct vm_page *page = get_page((uint32_t)addr, 0, kernel_directory);
+			*phys = page->p_frame * 0x1000 + ((uint32_t)addr & 0xFFF);
+		}
 	}
-	void *addr = alloc(len, (flags & M_ALIGNED), kernel_heap);
-	if (phys != NULL) {
-		struct vm_page *page = get_page((uint32_t)addr, 0, kernel_directory);
-		*phys = page->p_frame * 0x1000 + ((uint32_t)addr & 0xFFF);
-	}
+	if (flags & M_BZERO)
+		bzero(addr, len);
 	return (addr);
 }
 

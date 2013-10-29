@@ -57,11 +57,17 @@ vm_heap_header_cmp(void *a, void *b)
 struct vm_heap *
 new_heap(uint32_t start, uint32_t end, uint32_t max, int su, int ro)
 {
-	struct vm_heap *heap = kmalloc(sizeof(struct vm_heap));
-
+	struct vm_heap *heap = kmalloc0(sizeof(struct vm_heap));
 	if (heap == NULL)
 		PANIC("kmalloc");
+	return (init_heap(heap, start, end, max, su, ro));
+}
 
+
+struct vm_heap *
+init_heap(struct vm_heap *heap, uint32_t start, uint32_t end, uint32_t max, int
+    su, int ro)
+{
 	// All our assumptions are made on startAddress and endAddress being
 	// page-aligned.
 	KASSERT("start of the heap is page aligned", (start % 0x1000) == 0);

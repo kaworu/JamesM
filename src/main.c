@@ -15,10 +15,20 @@ struct multiboot;
 int
 kern_main(struct multiboot *mboot_ptr)
 {
-	init_descriptor_tables();
+
 	mon_clear();
+	(void)printf("+ booting.\n");
+
+	(void)printf("+ descriptor tables init...");
+	init_descriptor_tables();
+	printf("OK\n");
+
 	void *a = kmalloc(8);
+
+	(void)printf("+ switching to paged mode...");
 	init_paging();
+	printf("OK\n");
+
 	(void)printf("Hello paginated world :)\n");
 
 	void *b = kmalloc(8);

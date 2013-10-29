@@ -144,6 +144,12 @@ init_paging(void)
 		get_page(i, 1, kernel_directory);
 
 	/*
+	 * We allocate the kernel heap before identity mapping.
+	 * That way it is usable right after switching to paged mode.
+	 */
+	struct vm_heap *heap = kmalloc0(sizeof(struct vm_heap));
+
+	/*
 	 * We need to identity map (phys addr = virt addr) from 0x0 to the end
 	 * of used memory, so we can access this transparently, as if paging
 	 * wasn't enabled.  NOTE that we use a while loop here deliberately.
@@ -152,7 +158,7 @@ init_paging(void)
 	 * than once at the start.
 	 */
 	i = 0;
-	while (i < placement_address + sizeof(struct vm_heap)) {
+	while (i < placement_address) {
 		/* Kernel code is readable but not writeable from userspace. */
 		alloc_frame(get_page(i, 1, kernel_directory), 0, 0);
 		i += 0x1000;
@@ -162,14 +168,17 @@ init_paging(void)
 	for (i = VM_KERN_HEAP_START; i < VM_KERN_HEAP_START + VM_KERN_HEAP_INITIAL_SIZE; i += 0x1000)
 		alloc_frame(get_page(i, 0, kernel_directory), 0, 0);
 
+
 	/* Before we enable paging, we must register our page fault handler. */
 	register_interrupt_handler(14, page_fault_handler);
 
 	/* Now, enable paging! */
 	switch_page_directory(kernel_directory);
 
-	// Initialise the kernel heap.
-	kernel_heap = new_heap(VM_KERN_HEAP_START, VM_KERN_HEAP_START + VM_KERN_HEAP_INITIAL_SIZE, 0xCFFFF000, 0, 0);
+	// set the kernel heap. After that kmalloc() can be called and will use
+	// the heap.
+	kernel_heap = init_heap(heap, VM_KERN_HEAP_START, VM_KERN_HEAP_START +
+	    VM_KERN_HEAP_INITIAL_SIZE, 0xCFFFF000, 0, 0);
 }
 
 void

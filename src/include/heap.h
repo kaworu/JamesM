@@ -50,9 +50,14 @@ struct vm_heap {
 
 
 /*
- * Create a new heap.
+ * Allocate and initialize a new heap.
  */
 struct vm_heap	*new_heap(uint32_t start, uint32_t end, uint32_t max, int su, int ro);
+
+/*
+ * Initialise a heap.
+ */
+struct vm_heap	*init_heap(struct vm_heap *heap, uint32_t start, uint32_t end, uint32_t max, int su, int ro);
 
 /*
  * Allocates a contiguous region of memory 'size' in size. If page_align==1, it creates that block starting
