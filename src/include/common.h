@@ -15,14 +15,18 @@ uint8_t		inb(uint16_t port); /* read a byte out from port */
 uint16_t	inw(uint16_t port); /* read two bytes out from port */
 
 
-#define PANIC(s, ...)	do {                                    \
-	_panic("%s:%u: " s, __FILE__, __LINE__, ##__VA_ARGS__); \
-} while (/*CONSTCOND*/0);
+#define PANIC(s, ...)	_panic("%s:%u in %s: " s, __FILE__, __LINE__, __func__, ##__VA_ARGS__)
 void	_panic(const char *fmt, ...);
+
+#define KASSERT(msg, cond) (                                       \
+		(cond) ?                                           \
+		(void)0 :                                          \
+		PANIC("assertion failed: %s (%s)", (msg), (#cond)) \
+)
 
 void	bzero(void *b, size_t len);
 void *	memset(void *b, int c, size_t len);
 
-#endif /* ndef COMMON_H */
 #include <kmalloc.h>
 #include <freebsd.h>
+#endif /* ndef COMMON_H */

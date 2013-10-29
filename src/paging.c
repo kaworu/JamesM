@@ -1,5 +1,5 @@
 #include <paging.h>
-
+#include <heap.h>
 
 /* A bitset of frames - used or free. */
 uint32_t	*frames;
@@ -12,7 +12,6 @@ extern uint32_t	placement_address;
 struct vm_page_directory *kernel_directory;
 /* The current page directory */
 struct vm_page_directory *current_directory;
-
 
 /* Macros used in the bitset algorithms. */
 #define INDEX_FROM_BIT(a)	((a) / (8 * 4))
@@ -117,6 +116,8 @@ init_paging(void)
 {
 	int i;
 	uint32_t mem_end_page;
+	/* in heap.c */
+	extern struct vm_heap *kernel_heap;
 
 	/*
 	 * The size of physical memory.
@@ -125,10 +126,22 @@ init_paging(void)
 	mem_end_page = 0x1000000;
 
 	nframes = mem_end_page / 0x1000;
-	frames  = kmalloc(INDEX_FROM_BIT(nframes));
+	frames  = kmalloc0(INDEX_FROM_BIT(nframes));
 
 	/* Let's make a page directory. */
-	kernel_directory  = kmalloc_a(sizeof(struct vm_page_directory));
+	kernel_directory  = kmalloc0_a(sizeof(struct vm_page_directory));
+
+	/*
+	 * Map some pages in the kernel heap area.
+	 * Here we call get_page but not alloc_frame. This causes page_table_t's
+	 * to be created where necessary. We can't allocate frames yet because
+	 * they they need to be identity mapped first below, and yet we can't
+	 * increase placement_address between identity mapping and enabling the
+	 * heap.
+	 */
+	i = 0;
+	for (i = VM_KERN_HEAP_START; i < VM_KERN_HEAP_START + VM_KERN_HEAP_INITIAL_SIZE; i += 0x1000)
+		get_page(i, 1, kernel_directory);
 
 	/*
 	 * We need to identity map (phys addr = virt addr) from 0x0 to the end
@@ -139,16 +152,24 @@ init_paging(void)
 	 * than once at the start.
 	 */
 	i = 0;
-	while (i < placement_address) {
+	while (i < placement_address + sizeof(struct vm_heap)) {
 		/* Kernel code is readable but not writeable from userspace. */
 		alloc_frame(get_page(i, 1, kernel_directory), 0, 0);
 		i += 0x1000;
 	}
+
+	// Now allocate those pages we mapped earlier.
+	for (i = VM_KERN_HEAP_START; i < VM_KERN_HEAP_START + VM_KERN_HEAP_INITIAL_SIZE; i += 0x1000)
+		alloc_frame(get_page(i, 0, kernel_directory), 0, 0);
+
 	/* Before we enable paging, we must register our page fault handler. */
 	register_interrupt_handler(14, page_fault_handler);
 
 	/* Now, enable paging! */
 	switch_page_directory(kernel_directory);
+
+	// Initialise the kernel heap.
+	kernel_heap = new_heap(VM_KERN_HEAP_START, VM_KERN_HEAP_START + VM_KERN_HEAP_INITIAL_SIZE, 0xCFFFF000, 0, 0);
 }
 
 void
@@ -176,7 +197,7 @@ get_page(uint32_t address, int create, struct vm_page_directory *dir)
 		return (&dir->pd_tables[table_idx]->pt_pages[address % 1024]);
 	else if (create) {
 		uint32_t tmp;
-		dir->pd_tables[table_idx] = kmalloc_ap(sizeof(struct vm_page_table), &tmp);
+		dir->pd_tables[table_idx] = kmalloc0_ap(sizeof(struct vm_page_table), &tmp);
 		dir->pd_tblphys[table_idx] = tmp | 0x7; /* PRESENT, RW, US. */
 		return (&dir->pd_tables[table_idx]->pt_pages[address % 1024]);
 	} else

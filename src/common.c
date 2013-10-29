@@ -68,4 +68,5 @@ _panic(const char *fmt, ...)
 
 	for (;;)
 		;
+	/* NOTREACHED */
 }

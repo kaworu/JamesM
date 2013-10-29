@@ -8,20 +8,26 @@
 #include <paging.h>
 #include <timer.h>
 
+#include <heap.h>
+
 struct multiboot;
 
 int
 kern_main(struct multiboot *mboot_ptr)
 {
-	uint32_t *ptr, pg_fault;
-
 	init_descriptor_tables();
 	mon_clear();
+	void *a = kmalloc(8);
 	init_paging();
 	(void)printf("Hello paginated world :)\n");
 
-	ptr = (uint32_t *)0xA0000000;
-	pg_fault = *ptr;
+	void *b = kmalloc(8);
+	void *c = kmalloc(8);
+	(void)printf("a=0x%x,b=0x%x,c=0x%x\n", a, b, c);
+	kfree(c);
+	kfree(b);
+	void *d = kmalloc(12);
+	(void)printf("d=0x%x", d);
 
 	PANIC("end of kern_main()");
 	/* NOTREACHED */

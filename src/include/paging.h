@@ -54,6 +54,12 @@ void	switch_page_directory(struct vm_page_directory *pd);
 struct vm_page	*get_page(uint32_t address, int create,
 		    struct vm_page_directory *dir);
 
+/* map a frame to the given page p */
+void	alloc_frame(struct vm_page *p, int is_kernel, int is_writeable);
+
+/* routine to unmap page's frame. */
+void free_frame(struct vm_page *p);
+
 /**
  * Page faults handler.
  */
