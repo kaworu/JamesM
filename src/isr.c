@@ -10,7 +10,8 @@
 isrhdl_t interrupt_handlers[256];
 
 /* This gets called from our ASM interrupt handler stub. */
-void isr_handler(struct cpu_regs regs)
+void
+isr_handler(struct cpu_regs regs)
 {
 
 	if (interrupt_handlers[regs.int_no] != NULL) {
@@ -22,7 +23,8 @@ void isr_handler(struct cpu_regs regs)
 }
 
 /* This gets called from our ASM interrupt handler stub. */
-void irq_handler(struct cpu_regs regs) {
+void
+irq_handler(struct cpu_regs regs) {
 	/* Send an EOI (end of interrupt) signal to the PICs. If this interrupt
 	   involved the slave. */
 	if (regs.int_no >= 40) {
