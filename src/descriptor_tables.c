@@ -59,7 +59,7 @@ static void
 gdt_set_gate(uint32_t n, uint32_t base, uint32_t limit, uint8_t access,
     uint8_t gran)
 {
-	if (n >= countof(gdt_entries))
+	if (n >= NELEM(gdt_entries))
 		PANIC("bad gdt_entries index");
 
 	gdt_entries[n].ge_base_lo = (base & 0xFFFF);
@@ -150,7 +150,7 @@ init_idt(void)
 static void
 idt_set_gate(uint32_t n, uint32_t base, uint16_t sel, uint8_t flags)
 {
-	if (n >= countof(idt_entries))
+	if (n >= NELEM(idt_entries))
 		PANIC("Bad idt_entries index");
 
 	idt_entries[n].ie_base_lo = base & 0xFFFF;

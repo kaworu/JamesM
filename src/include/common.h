@@ -8,7 +8,7 @@
 #include <types.h>
 #include <__attributes__.h>
 
-#define countof(x)	(sizeof((x)) / sizeof((x)[0]))
+#define NELEM(x)	(sizeof((x)) / sizeof((x)[0]))
 
 void		outb(uint16_t port, uint8_t value); /* write a byte out to port */
 uint8_t		inb(uint16_t port); /* read a byte out from port */
