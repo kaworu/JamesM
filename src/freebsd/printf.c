@@ -48,31 +48,31 @@ vprintf(const char *fmt, va_list ap)
 				i = va_arg(ap, int);
 				u = (i < 0 ? -i : i);
 				s = buf;
-				do
+				do {
 					*s++ = '0' + u % 10U;
-				while (u /= 10U);
+				} while (u /= 10U);
 				if (i < 0)
 					*s++ = '-';
 				goto dumpbuf;
 			case 'u':
 				u = va_arg(ap, unsigned);
 				s = buf;
-				do
+				do {
 					*s++ = '0' + u % 10U;
-				while (u /= 10U);
-			dumpbuf:;
+				} while (u /= 10U);
+				goto dumpbuf;
+			case 'x':
+				u = va_arg(ap, unsigned);
+				s = buf;
+				do {
+					*s++ = hex[u & 0xfu];
+				} while (u >>= 4);
+			dumpbuf:
 				while (--s >= buf) {
 					mon_putchar(*s);
 					ret++;
 				}
 				continue;
-			case 'x':
-				u = va_arg(ap, unsigned);
-				s = buf;
-				do
-					*s++ = hex[u & 0xfu];
-				while (u >>= 4);
-				goto dumpbuf;
 			}
 		}
 		mon_putchar(c);
