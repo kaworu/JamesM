@@ -23,7 +23,7 @@ static void *	_kmalloc(size_t len, uint32_t *phys, uint32_t flags);
 
 /* bitmask flags for _kmalloc() */
 #define M_ALIGNED	0x1
-#define M_BZERO		0x2
+#define M_ZERO		0x2
 
 
 void *
@@ -35,7 +35,7 @@ kmalloc(size_t len)
 void *
 kmalloc0(size_t len)
 {
-	return (_kmalloc(len, NULL,  M_BZERO));
+	return (_kmalloc(len, NULL,  M_ZERO));
 }
 
 void *
@@ -49,7 +49,7 @@ void *
 kmalloc0_a(size_t len)
 {
 
-	return (_kmalloc(len, NULL, (M_ALIGNED | M_BZERO)));
+	return (_kmalloc(len, NULL, (M_ALIGNED | M_ZERO)));
 }
 
 void *
@@ -63,7 +63,7 @@ void *
 kmalloc0_p(size_t len, uint32_t *phys)
 {
 
-	return (_kmalloc(len, phys, M_BZERO));
+	return (_kmalloc(len, phys, M_ZERO));
 }
 
 void *
@@ -77,7 +77,7 @@ void *
 kmalloc0_ap(size_t len, uint32_t *phys)
 {
 
-	return (_kmalloc(len, phys, (M_ALIGNED | M_BZERO)));
+	return (_kmalloc(len, phys, M_ALIGNED | M_ZERO));
 }
 
 
@@ -102,7 +102,7 @@ _kmalloc(size_t len, uint32_t *phys, uint32_t flags)
 			*phys = page->p_frame * 0x1000 + ((uint32_t)addr & 0xFFF);
 		}
 	}
-	if (flags & M_BZERO)
+	if (flags & M_ZERO)
 		bzero(addr, len);
 	return (addr);
 }

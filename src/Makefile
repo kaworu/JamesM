@@ -18,9 +18,12 @@ SOURCES=                \
 	paging.o            \
 	kmalloc.o           \
 	sorted_array.o      \
-	heap.o
+	heap.o              \
+	vfs.o               \
+	tar.o               \
+	initrd.o            \
 
-CFLAGS=-g -O0 -Wall -nostdlib -nostdinc -fno-builtin -fno-stack-protector -m32 -I./include -I./freebsd/i386/include
+CFLAGS=-g -O0 -Wall -nostdlib -nostdinc -fno-builtin -fno-stack-protector -m32 -I./include -I./freebsd/i386/include -I./freebsd
 LDFLAGS=-Tlink.ld -melf_i386
 ASFLAGS=-felf
 

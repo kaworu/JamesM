@@ -24,8 +24,12 @@ void	_panic(const char *fmt, ...);
 		PANIC("assertion failed: %s (%s)", (msg), (#cond)) \
 )
 
-void	bzero(void *b, size_t len);
 void *	memset(void *b, int c, size_t len);
+void	bzero(void *b, size_t len);
+void *	memcpy(void *dest, const void *src, size_t count);
+size_t	strlen(const char *s);
+int	strcmp(const char *s1, const char *s2);
+
 
 #include <kmalloc.h>
 #include <freebsd.h>

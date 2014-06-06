@@ -18,6 +18,7 @@ case "$(/usr/bin/basename "$0")" in
         /sbin/losetup /dev/loop0 "$D/floppy.img"
         /bin/mount /dev/loop0 "$D/mnt"
         /bin/cp src/kernel "$D/mnt/kernel"
+        /bin/cp initrd.tar "$D/mnt/initrd"
         /bin/sync
         /bin/umount /dev/loop0
         /sbin/losetup -d /dev/loop0

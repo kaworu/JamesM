@@ -53,6 +53,39 @@ bzero(void *b, size_t len)
 }
 
 
+void *
+memcpy(void *dest, const void *src, size_t count)
+{
+	char* dst8 = (char *)dest;
+	char* src8 = (char *)src;
+
+	while (count--)
+		*dst8++ = *src8++;
+
+	return dest;
+}
+
+
+size_t
+strlen(const char *s)
+{
+	size_t l = 0;
+	for (l = 0; s[l] != '\0'; l++)
+		;
+	return (l);
+}
+
+int
+strcmp(const char *s1, const char *s2)
+{
+	// stolen from freebsd
+while (*s1 == *s2++)
+if (*s1++ == '\0')
+return (0);
+return (*(const unsigned char *)s1 - *(const unsigned char *)(s2 - 1));
+
+}
+
 void
 _panic(const char *fmt, ...)
 {
