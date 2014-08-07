@@ -12,4 +12,4 @@ probably under GPLv2.
 
 Files in the src/ directory comes mostly from the tutorial (for each exception
 the license header have been retained in the concerned files) so consider it
-under CC0 (see http://creativecommons.org/publicdomain/zero/1.0/).
+under CC0 (see https://creativecommons.org/publicdomain/zero/1.0/).
