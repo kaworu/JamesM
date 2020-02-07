@@ -44,7 +44,7 @@ void
 register_interrupt_handler(uint32_t n, isrhdl_t handler)
 {
 
-	if (n > NELEM(interrupt_handlers))
+	if (n >= NELEM(interrupt_handlers))
 		PANIC("Bad interrupt handler index.");
 	interrupt_handlers[n] = handler;
 }
